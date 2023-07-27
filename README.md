@@ -1,2 +1,4 @@
-# postman-collections
-Postman - All things postman, here in one place
+# APS Postman Collection
+
+Please import both collection and environment. 
+

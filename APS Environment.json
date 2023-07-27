@@ -1,0 +1,73 @@
+{
+	"id": "c7d705c1-cafa-4295-8b01-31bdff590a8b",
+	"name": "APS Environment",
+	"values": [
+		{
+			"key": "APS_HOST",
+			"value": "https://developer.api.autodesk.com",
+			"enabled": true
+		},
+		{
+			"key": "APS_CLIENT_ID",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "APS_CLIENT_SECRET",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "APS_CALLBACK_URL",
+			"value": "http://localhost:3000/api/aps/callback/oauth",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "APS_SCOPES",
+			"value": "data:read data:write data:create bucket:read bucket:create account:read",
+			"enabled": true
+		},
+		{
+			"key": "BUCKET",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "2_LEGGED_TOKEN",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "3_LEGGED_TOKEN",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "TOKEN_EXPIRES_AT",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "URN",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "REFRESH_TOKEN",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "OBJECT",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2023-07-27T07:27:46.928Z",
+	"_postman_exported_using": "Postman/10.16.0"
+}

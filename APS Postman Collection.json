@@ -1,0 +1,2874 @@
+{
+	"info": {
+		"_postman_id": "9ab71632-5112-455a-994f-f373fcb13641",
+		"name": "APS Postman Collection",
+		"description": "Autodesk Platform Services API Postman Collection\n\nPlease select the environment and add APS_CLIENT_ID and APS_CLIENT_SECRET.\n\nIf you're using BIM360 or ACC, add hub id. You can add project id as well for ease of testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4109888"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "OIDC Specification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/.well-known/openid-configuration",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								".well-known",
+								"openid-configuration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "JWKS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/authentication/v2/keys",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"authentication",
+								"v2",
+								"keys"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate (2 legged)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"2_LEGGED_TOKEN\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{APS_CLIENT_ID}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{APS_CLIENT_SECRET}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"description": "Required",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "{{APS_SCOPES}}",
+									"description": "Optional",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/authentication/v2/token",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"authentication",
+								"v2",
+								"token"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/oauth/v2/reference/http/authenticate-POST/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate (3 legged)",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "useBrowser",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "body",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "https://developer.api.autodesk.com/authentication/v1/gettoken",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://developer.api.autodesk.com/authentication/v1/authorize",
+									"type": "string"
+								},
+								{
+									"key": "redirect_uri",
+									"value": "https://www.getpostman.com/oauth2/callback",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "{{APS_SCOPES}}",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "{{APS_CLIENT_SECRET}}",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "{{APS_CLIENT_ID}}",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Token Name",
+									"type": "string"
+								},
+								{
+									"key": "accessToken",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "bearer",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "callBackUrl",
+									"type": "any"
+								},
+								{
+									"key": "clientAuth",
+									"type": "any"
+								},
+								{
+									"key": "grantType",
+									"type": "any"
+								},
+								{
+									"key": "username",
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"type": "any"
+								},
+								{
+									"key": "redirectUri",
+									"type": "any"
+								},
+								{
+									"key": "refreshToken",
+									"type": "any"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/authentication/v2/authorize?client_id={{APS_CLIENT_ID}}&redirect_uri={{APS_CALLBACK_URL}}&response_type=code",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"authentication",
+								"v2",
+								"authorize"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "{{APS_CLIENT_ID}}"
+								},
+								{
+									"key": "redirect_uri",
+									"value": "{{APS_CALLBACK_URL}}"
+								},
+								{
+									"key": "response_type",
+									"value": "code"
+								}
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/oauth/v2/reference/http/authorize-GET/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token (3 legged)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"3LeggedToken\", jsonData.access_token);",
+									"postman.setEnvironmentVariable(\"refreshToken\", jsonData.refresh_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{APS_CLIENT_SECRET}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{APS_CLIENT_ID}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"description": "Required",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{REFRESH_TOKEN}}",
+									"description": "Required",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "{{APS_SCOPES}}",
+									"description": "Optional",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/authentication/v2/token",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"authentication",
+								"v2",
+								"token"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/oauth/v2/reference/http/refreshtoken-POST/\">Documentation</a>"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Data Management",
+			"item": [
+				{
+					"name": "Create Bucket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-ads-region",
+								"value": "US",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketKey\": \"{{bucketKey}}\",\n\t\"policyKey\": \"transient\"\n}"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-POST/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Bucket Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}",
+								"description": "Required"
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/details",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"details"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-details-GET/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "List Buckets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets?region=US&limit=10",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "US"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "startAt",
+									"value": "xxx",
+									"description": "Key to use as an offset to continue pagination This is typically the last bucket key found in a preceding GET buckets response",
+									"disabled": true
+								}
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-GET/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bucket",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{bucketKey}}",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{bucketKey}}"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-DELETE/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Create signed URL",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2LeggedToken}}",
+								"description": "Required"
+							},
+							{
+								"key": "Content-Disposition",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							},
+							{
+								"key": "Content-Length",
+								"value": "",
+								"description": "Required",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							},
+							{
+								"key": "If-Match",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects/{{OBJECT}}/signed",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects",
+								"{{OBJECT}}",
+								"signed"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectName-PUT/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Upload URL (S3)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"uploadKey\", jsonData.uploadKey);\r",
+									"pm.environment.set(\"uploadUrl\", jsonData.urls[0]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}",
+								"description": "Required"
+							},
+							{
+								"key": "Content-Disposition",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							},
+							{
+								"key": "Content-Length",
+								"value": "",
+								"description": "Required",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							},
+							{
+								"key": "If-Match",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects/{{OBJECT}}/signeds3upload",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects",
+								"{{OBJECT}}",
+								"signeds3upload"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectName-PUT/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload file (S3)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var header = pm.response.headers.get(\"ETag\");\r",
+									"\r",
+									"pm.environment.set(\"uploadHeader\", header);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": ""
+							}
+						},
+						"url": {
+							"raw": "{{APS_HOST}}",
+							"host": [
+								"{{APS_HOST}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete upload (S3)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"uploadKey\": \"{{uploadKey}}\",\r\n    \"eTags\": [\r\n        {{uploadHeader}}\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects/{{OBJECT}}/signeds3upload",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects",
+								"{{OBJECT}}",
+								"signeds3upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Download URL (S3)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}",
+								"description": "Required"
+							},
+							{
+								"key": "Content-Disposition",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							},
+							{
+								"key": "Content-Length",
+								"value": "",
+								"description": "Required",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							},
+							{
+								"key": "If-Match",
+								"value": "",
+								"description": "Optional",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects/{{OBJECT}}/signeds3download",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects",
+								"{{OBJECT}}",
+								"signeds3download"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Objects in Bucket",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}}}",
+								"description": "Required"
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects"
+							]
+						},
+						"description": "<a href=\"https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-GET/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Object Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}",
+								"description": "Required"
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects/{{OBJECT}}/details",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects",
+								"{{OBJECT}}",
+								"details"
+							]
+						},
+						"description": "<a href=\"https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectKey-details-GET\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bucket Object",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2_LEGGED_TOKEN}}",
+								"description": "Required"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/{{BUCKET}}/objects/{{OBJECT}}",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								"{{BUCKET}}",
+								"objects",
+								"{{OBJECT}}"
+							]
+						},
+						"description": "<a href=\"https://developer.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectName-DELETE/\">Documentation</a>"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Model Derivatives",
+			"item": [
+				{
+					"name": "Start Translation Job",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"input\": {\n\t\t\"urn\": \"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGV0cmJyb3otZGF0YXNhbXBsZXMvMDA4LXZiZWx0LmR3Zw\",\n\t\t\"compressedUrn\": true,\n\t\t\"rootFilename\": \"Workspace/_Jet Engine Model.iam\"\n\t},\n\t\"output\": {\n\t\t\"formats\": [\n\t\t\t{\n\t\t\t\t\"type\": \"svf\",\n\t\t\t\t\"views\": [\n\t\t\t\t\t\"2d\",\n\t\t\t\t\t\"3d\"\n\t\t\t\t]\n            }\n        ]\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/job",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								"job"
+							]
+						},
+						"description": "Submitting an SVF translation job."
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Manifest",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/:urn/manifest",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								":urn",
+								"manifest"
+							],
+							"variable": [
+								{
+									"key": "urn",
+									"value": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGV0cmJyb3otYmltMzYwLXNhbXBsZXMvaG91c2UucnZ0"
+								}
+							]
+						},
+						"description": "Retrieves manifest of given object."
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Thumbnail",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/:urn/thumbnail",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								":urn",
+								"thumbnail"
+							],
+							"variable": [
+								{
+									"key": "urn",
+									"value": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGV0cmJyb3otZGF0YXNhbXBsZXMvYXBwbGUucnZ0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Model Views",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/:urn/metadata",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								":urn",
+								"metadata"
+							],
+							"variable": [
+								{
+									"key": "urn",
+									"value": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGV0cmJyb3otZGF0YXNhbXBsZXMvQ1A1NiUyMFdFU1QlMjBBRkUlMjBTT1JURVIlMjBMMS4xLmR3Zw=="
+								}
+							]
+						},
+						"description": "Retrieves metadata of a given object."
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Object Tree",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/:urn/metadata/:guid",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								":urn",
+								"metadata",
+								":guid"
+							],
+							"variable": [
+								{
+									"key": "urn",
+									"value": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6c2FtcGxlbW9kZWxzL09mZmljZS5ydnQ"
+								},
+								{
+									"key": "guid",
+									"value": "f6934ce8-fd90-c5ac-2bae-b56f725adc8c"
+								}
+							]
+						},
+						"description": "Retrieves metadata of a given object."
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch All Properties",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/:urn/metadata/:guid/properties",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								":urn",
+								"metadata",
+								":guid",
+								"properties"
+							],
+							"variable": [
+								{
+									"key": "urn",
+									"value": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6c2FtcGxlbW9kZWxzL09mZmljZS5ydnQ"
+								},
+								{
+									"key": "guid",
+									"value": "f6934ce8-fd90-c5ac-2bae-b56f725adc8c"
+								}
+							]
+						},
+						"description": "Retrieves properties of a specific GUID in design data."
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Specific Properties",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n              \"query\": {\n                  \"$in\": [\n                      \"objectid\",\n                      1626\n                  ]\n              },\n              \"fields\": [\n                  \"objectid\",\n                  \"name\",\n                  \"externalId\",\n                  \"properties.Cons*\"\n              ],\n              \"pagination\": {\n                  \"offset\": 0,\n                  \"limit\": 20\n              },\n              \"payload\": \"text\"\n          }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/modelderivative/v2/designdata/:urn/metadata/:modelGuid/properties:query",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"modelderivative",
+								"v2",
+								"designdata",
+								":urn",
+								"metadata",
+								":modelGuid",
+								"properties:query"
+							],
+							"variable": [
+								{
+									"key": "urn",
+									"value": null
+								},
+								{
+									"key": "modelGuid",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{ACCESS_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Design Automation v3",
+			"item": [
+				{
+					"name": "Engines",
+					"item": [
+						{
+							"name": "List engines",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/engines",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"engines"
+									]
+								},
+								"description": "Get list of all available engines."
+							},
+							"response": []
+						},
+						{
+							"name": "Get engine details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/engines/:id",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"engines",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "Autodesk.Inventor+23"
+										}
+									]
+								},
+								"description": "Get list of all available engines."
+							},
+							"response": []
+						},
+						{
+							"name": "Get engine status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/health/:engine",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"health",
+										":engine"
+									],
+									"variable": [
+										{
+											"key": "engine",
+											"value": "Inventor"
+										}
+									]
+								},
+								"description": "Get list of all available engines."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "App Bundles",
+					"item": [
+						{
+							"name": "Create app bundle",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": \"MyThumbnailAppBundle\",\n\t\"description\": \"App bundle generating thumbnails from IPT files.\",\n\t\"engine\": \"Autodesk.Inventor+23\"\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles"
+									]
+								},
+								"description": "Creates new app bundle."
+							},
+							"response": []
+						},
+						{
+							"name": "List app bundles",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get app bundle details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "SampleAppBundle+foo"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create app bundle version",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"description\": \"Thumbnail generating app bundle.\",\n\t\"engine\": \"Autodesk.Inventor+23\"\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/versions",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"versions"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "ThumbnailAppBundle"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List app bundle versions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/versions",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"versions"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "MyThumbnailAppBundle"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get app bundle version details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/versions/:version",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"versions",
+										":version"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "SampleAppBundle"
+										},
+										{
+											"key": "version",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create app bundle alias",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": \"prod\",\n\t\"version\": 1\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/aliases",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"aliases"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "MyThumbnailAppBundle"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update app bundle alias",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"version\": 9\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/aliases/:alias_id",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"aliases",
+										":alias_id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "ThumbnailAppBundle"
+										},
+										{
+											"key": "alias_id",
+											"value": "prod"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List app bundle aliases",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/aliases",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"aliases"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "MyThumbnailAppBundle"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get app bundle alias details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/appbundles/:id/aliases/:alias_id",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"appbundles",
+										":id",
+										"aliases",
+										":alias_id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "ThumbnailAppBundle"
+										},
+										{
+											"key": "alias_id",
+											"value": "prod"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload binaries for app bundle",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "key",
+											"value": "apps/YhryNMLor4R1maFhY4zER8unpISoP5E4/ThumbnailAppBundle/9",
+											"type": "text"
+										},
+										{
+											"key": "policy",
+											"value": "eyJleHBpcmF0aW9uIjoiMjAxOC0xMC0yNlQxNDo1MjozNS4xNDUxMDU0WiIsImNvbmRpdGlvbnMiOlt7ImtleSI6ImFwcHMvWWhyeU5NTG9yNFIxbWFGaFk0ekVSOHVucElTb1A1RTQvVGh1bWJuYWlsQXBwQnVuZGxlLzkifSx7ImJ1Y2tldCI6ImRhc3Byb2Qtc3RvcmUifSx7InN1Y2Nlc3NfYWN0aW9uX3N0YXR1cyI6IjIwMCJ9LFsic3RhcnRzLXdpdGgiLCIkc3VjY2Vzc19hY3Rpb25fcmVkaXJlY3QiLCIiXSxbInN0YXJ0cy13aXRoIiwiJGNvbnRlbnQtVHlwZSIsImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSJdLHsieC1hbXotc2VydmVyLXNpZGUtZW5jcnlwdGlvbiI6IkFFUzI1NiJ9LFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLCIwIiwiMTA0ODU3NjAwIl0seyJ4LWFtei1jcmVkZW50aWFsIjoiQVNJQVRHVkpaS00zTlhWTzVOU0UvMjAxODEwMjYvdXMtZWFzdC0xL3MzL2F3czRfcmVxdWVzdC8ifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7IngtYW16LWRhdGUiOiIyMDE4MTAyNlQxMzUyMzVaIn0seyJ4LWFtei1zZWN1cml0eS10b2tlbiI6IkZRb0daWEl2WVhkekVDNGFERnlxcjlSYU9XYW5rN3B5R0NMOUFjcEZFcExSTzBmbENqUmVJTUtYby9iaDg4dzFoRFJBOHlacllla1lEd1BpM3JmWmNJVFVqc2lhMExiRi9sbCtXclBZbDAyblRLR2M1Y1laeEE0Lzg2Umd4SHBmS2lRUzJYMUxqTHNwajVOVTVGaCtUSXQ0eDRUTUVvN3pRN1U4TEp4Skc1dlFtMkRYaWd1dkowUy9PUnZSd0NaUjRGVU0zdFpQY0FRRlM2L1pTdU04TnhjVm4zMmt0T2xLamYwM0pyS203UWhNalg5c0ZGVkJQYXlrMlBkQkd4bHkzNmdWYzg5S0ZhRVdjeExPMVNqL1FNRzlWdnNpL3VoZkNFRlZvUGFIK1NtS1hDRkIzcGJYSEh0UHQ0TzgwSGpyVjJ3RkpNQStCS0ZCVXkveW1zUmZIOGxhMDlPb2xicjBXYU1hSytVSEJ2MVhPZXJNWjRpWW9EOG8xSXJNM2dVPSJ9XX0=",
+											"type": "text"
+										},
+										{
+											"key": "content-type",
+											"value": "application/octet-stream",
+											"type": "text"
+										},
+										{
+											"key": "success_action_status",
+											"value": "200",
+											"type": "text"
+										},
+										{
+											"key": "success_action_redirect",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "x-amz-signature",
+											"value": "215f1dc22e1fe9954468b6f8336abd232560356dc779ab81cbd43895a197fd3b",
+											"type": "text"
+										},
+										{
+											"key": "x-amz-credential",
+											"value": "ASIATGVJZKM3NXVO5NSE/20181026/us-east-1/s3/aws4_request/",
+											"type": "text"
+										},
+										{
+											"key": "x-amz-algorithm",
+											"value": "AWS4-HMAC-SHA256",
+											"type": "text"
+										},
+										{
+											"key": "x-amz-date",
+											"value": "20181026T135235Z",
+											"type": "text"
+										},
+										{
+											"key": "x-amz-server-side-encryption",
+											"value": "AES256",
+											"type": "text"
+										},
+										{
+											"key": "x-amz-security-token",
+											"value": "FQoGZXIvYXdzEC4aDFyqr9RaOWank7pyGCL9AcpFEpLRO0flCjReIMKXo/bh88w1hDRA8yZrYekYDwPi3rfZcITUjsia0LbF/ll+WrPYl02nTKGc5cYZxA4/86RgxHpfKiQS2X1LjLspj5NU5Fh+TIt4x4TMEo7zQ7U8LJxJG5vQm2DXiguvJ0S/ORvRwCZR4FUM3tZPcAQFS6/ZSuM8NxcVn32ktOlKjf03JrKm7QhMjX9sFFVBPayk2PdBGxly36gVc89KFaEWcxLO1Sj/QMG9Vvsi/uhfCEFVoPaH+SmKXCFB3pbXHHtPt4O80HjrV2wFJMA+BKFBUy/ymsRfH8la09Oolbr0WaMaK+UHBv1XOerMZ4iYoD8o1IrM3gU=",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "https://dasprod-store.s3.amazonaws.com",
+									"protocol": "https",
+									"host": [
+										"dasprod-store",
+										"s3",
+										"amazonaws",
+										"com"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Activities",
+					"item": [
+						{
+							"name": "Create activity",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"commandLine\": [\n        \"$(engine.path)\\\\InventorCoreConsole.exe /i $(args[PartFile].path) /al $(appbundles[ThumbnailAppBundle].path)\"\n    ],\n    \"parameters\": {\n        \"PartFile\": {\n            \"verb\": \"get\",\n            \"description\": \"IPT file or ZIP with assembly to process\"\n        },\n        \"OutputBmp\": {\n            \"zip\": false,\n            \"ondemand\": false,\n            \"optional\": true,\n            \"verb\": \"put\",\n            \"description\": \"Generated thumbnail\",\n            \"localName\": \"thumbnail.bmp\"\n        }\n    },\n    \"engine\": \"Autodesk.Inventor+23\",\n    \"appbundles\": [\"YhryNMLor4R1maFhY4zER8unpISoP5E4.ThumbnailAppBundle+prod\"],\n    \"description\": \"Generate thumbnails for IPT files (Inventor 2019).\",\n    \"id\": \"GenerateThumbnail\"\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/activities",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"activities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all activities",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/activities",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"activities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create activity alias",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": \"prod\",\n\t\"version\": 1\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/activities/:id/aliases",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"activities",
+										":id",
+										"aliases"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "GenerateThumbnail"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List activity aliases",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/activities/:id/aliases",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"activities",
+										":id",
+										"aliases"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "MyThumbnailGenerator"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Work Items",
+					"item": [
+						{
+							"name": "Create work item",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"activityId\": \"YhryNMLor4R1maFhY4zER8unpISoP5E4.GenerateThumbnailV2+prod\",\n    \"arguments\": {\n        \"PartFile\": {\n            \"url\": \"https://s3.eu-west-2.amazonaws.com/brozp/inventor.io/Clutch_Gear_20t.ipt\",\n            \"zip\": false\n        },\n        \"OutputBmp\": {\n            \"url\": \"https://petr-broz.s3.eu-west-2.amazonaws.com/inventor.io/foo.bmp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJRVGPEZNETOIVE7A%2F20181026%2Feu-west-2%2Fs3%2Faws4_request&X-Amz-Date=20181026T153916Z&X-Amz-Expires=3600&X-Amz-Signature=444cc7bb64ba7b4b807c21ae1eda696652bcc006fb0e51eb4ace793314769b64&X-Amz-SignedHeaders=host\",\n            \"verb\": \"put\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/workitems",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"workitems"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get work item details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/da/us-east/v3/workitems/:id",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"da",
+										"us-east",
+										"v3",
+										"workitems",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "fa1659c715134a9ba8058da21265185f"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{ACCESS_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "BIM 360",
+			"item": [
+				{
+					"name": "/project/v1/hubs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/project/v1/hubs",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"project",
+								"v1",
+								"hubs"
+							]
+						},
+						"description": "Lists all buckets."
+					},
+					"response": []
+				},
+				{
+					"name": "/project/v1/hubs/:hub/projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/project/v1/hubs/:hub/projects",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"project",
+								"v1",
+								"hubs",
+								":hub",
+								"projects"
+							],
+							"variable": [
+								{
+									"key": "hub",
+									"value": ""
+								}
+							]
+						},
+						"description": "Lists all buckets."
+					},
+					"response": []
+				},
+				{
+					"name": "/project/v1/hubs/:hub/projects/:project/topFolders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/project/v1/hubs/:hub/projects/:project/topFolders",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"project",
+								"v1",
+								"hubs",
+								":hub",
+								"projects",
+								":project",
+								"topFolders"
+							],
+							"variable": [
+								{
+									"key": "hub",
+									"value": ""
+								},
+								{
+									"key": "project",
+									"value": ""
+								}
+							]
+						},
+						"description": "Lists all buckets."
+					},
+					"response": []
+				},
+				{
+					"name": "/data/v1/projects/:project/folders/:folder/contents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/data/v1/projects/:project/folders/:folder/contents",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"data",
+								"v1",
+								"projects",
+								":project",
+								"folders",
+								":folder",
+								"contents"
+							],
+							"variable": [
+								{
+									"key": "project",
+									"value": ""
+								},
+								{
+									"key": "folder",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/data/v1/projects/:project/items/:item/tip",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/data/v1/projects/:project/items/:item/tip",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"data",
+								"v1",
+								"projects",
+								":project",
+								"items",
+								":item",
+								"tip"
+							],
+							"variable": [
+								{
+									"key": "project",
+									"value": ""
+								},
+								{
+									"key": "item",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/data/v1/projects/:project/storage",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"jsonapi\": { \"version\": \"1.0\" },\n      \"data\": {\n        \"type\": \"objects\",\n        \"attributes\": {\n          \"name\": \"test.rvt\"\n        },\n        \"relationships\": {\n          \"target\": {\n            \"data\": { \"type\": \"folders\", \"id\": \"\" }\n          }\n        }\n      }\n}"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/data/v1/projects/:project/storage",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"data",
+								"v1",
+								"projects",
+								":project",
+								"storage"
+							],
+							"variable": [
+								{
+									"key": "project",
+									"value": ""
+								}
+							]
+						},
+						"description": "Lists all buckets."
+					},
+					"response": []
+				},
+				{
+					"name": "/oss/v2/buckets/:bucket/objects/:object",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "{\n      \"jsonapi\": { \"version\": \"1.0\" },\n      \"data\": {\n        \"type\": \"objects\",\n        \"attributes\": {\n          \"name\": \"basic.rvt\"\n        },\n        \"relationships\": {\n          \"target\": {\n            \"data\": { \"type\": \"folders\", \"id\": \"urn:adsk.wipprod:fs.folder:co.zo9tiVUsSXSdHrtpmIVcJw\" }\n          }\n        }\n      }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/oss/v2/buckets/:bucket/objects/:object",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"oss",
+								"v2",
+								"buckets",
+								":bucket",
+								"objects",
+								":object"
+							],
+							"variable": [
+								{
+									"key": "bucket",
+									"value": "wip.dm.prod"
+								},
+								{
+									"key": "object",
+									"value": ""
+								}
+							]
+						},
+						"description": "Lists all buckets."
+					},
+					"response": []
+				},
+				{
+					"name": "/data/v1/projects/:project/items",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jsonapi\": { \"version\": \"1.0\" },\n    \"data\": {\n      \"type\": \"items\",\n      \"attributes\": {\n        \"displayName\": \"basic.rvt\",\n        \"extension\": {\n          \"type\": \"items:autodesk.bim360:File\",\n          \"version\": \"1.0\"\n        }\n      },\n      \"relationships\": {\n        \"tip\": {\n          \"data\": {\n            \"type\": \"versions\", \"id\": \"1\"\n          }\n        },\n        \"parent\": {\n          \"data\": {\n            \"type\": \"folders\",\n            \"id\": \"urn:adsk.wipprod:fs.folder:co.zo9tiVUsSXSdHrtpmIVcJw\"\n          }\n        }\n      }\n    },\n    \"included\": [\n      {\n        \"type\": \"versions\",\n        \"id\": \"1\",\n        \"attributes\": {\n          \"name\": \"basic.rvt\",\n          \"extension\": {\n            \"type\": \"versions:autodesk.bim360:File\",\n            \"version\": \"1.0\"\n          }\n        },\n        \"relationships\": {\n          \"storage\": {\n            \"data\": {\n              \"type\": \"objects\",\n              \"id\": \"urn:adsk.objects:os.object:wip.dm.prod/ecd58956-743f-409e-a9b8-12bf29213563.rvt\"\n            }\n          }\n        }\n      }\n    ]\n  }"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/data/v1/projects/:project/items",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"data",
+								"v1",
+								"projects",
+								":project",
+								"items"
+							],
+							"variable": [
+								{
+									"key": "project",
+									"value": ""
+								}
+							]
+						},
+						"description": "Lists all buckets."
+					},
+					"response": []
+				},
+				{
+					"name": "/hq/v1/accounts/:account/projects",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJ5VDREdE8zYUZiQnJLUDFubEVxdm5iZEJ2TldzdHpKbCIsImV4cCI6MTU0MzkzNzgxOCwic2NvcGUiOlsiYWNjb3VudDpyZWFkIl0sImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tL2F1ZC9qd3RleHA2MCIsImp0aSI6InUyeHB1TjBEenloTGJJSmhUWmlJNThBWGJMN3JFMXE1SlNoTlhUSE00Z00yVHlYRHRGS05CMGF4dURHYm40azQifQ.vX7AC4Rgz0vAEu9SSX_nfCCcs7XoOdLQuqaRqG6JPjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/hq/v1/accounts/:account/projects",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"hq",
+								"v1",
+								"accounts",
+								":account",
+								"projects"
+							],
+							"variable": [
+								{
+									"key": "account",
+									"value": "{{BIM360_ACCOUNT_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/hq/v1/accounts/:account/projects/:project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJ5VDREdE8zYUZiQnJLUDFubEVxdm5iZEJ2TldzdHpKbCIsImV4cCI6MTU0MzkzNzgxOCwic2NvcGUiOlsiYWNjb3VudDpyZWFkIl0sImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tL2F1ZC9qd3RleHA2MCIsImp0aSI6InUyeHB1TjBEenloTGJJSmhUWmlJNThBWGJMN3JFMXE1SlNoTlhUSE00Z00yVHlYRHRGS05CMGF4dURHYm40azQifQ.vX7AC4Rgz0vAEu9SSX_nfCCcs7XoOdLQuqaRqG6JPjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/hq/v1/accounts/:account/projects/:project",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"hq",
+								"v1",
+								"accounts",
+								":account",
+								"projects",
+								":project"
+							],
+							"variable": [
+								{
+									"key": "account",
+									"value": "{{BIM360_ACCOUNT_ID}}"
+								},
+								{
+									"key": "project",
+									"value": "332f0cb3-1980-4cc2-9679-984d34603203"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/issues/v1/containers/:container/quality-issues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APS_HOST}}/issues/v1/containers/:container/quality-issues",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"issues",
+								"v1",
+								"containers",
+								":container",
+								"quality-issues"
+							],
+							"variable": [
+								{
+									"key": "container",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "oauth2",
+				"oauth2": [
+					{
+						"key": "accessToken",
+						"value": "eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJ1c2VyaWQiOiJHNVBDSkczNVU5OEoiLCJleHAiOjE1NDgwNjYxNTIsInNjb3BlIjpbImRhdGE6Y3JlYXRlIiwiZGF0YTp3cml0ZSIsImRhdGE6cmVhZCIsImJ1Y2tldDpyZWFkIiwiYnVja2V0OmNyZWF0ZSIsImNvZGU6YWxsIiwiYWNjb3VudDpyZWFkIiwidmlld2FibGVzOnJlYWQiXSwiY2xpZW50X2lkIjoieVQ0RHRPM2FGYkJyS1AxbmxFcXZuYmRCdk5Xc3R6SmwiLCJncmFudF9pZCI6Im9oQjROaVp3bmpaWFN4bkVMb0t0M3pqemd1bTdpUTg2IiwiYXVkIjoiaHR0cHM6Ly9hdXRvZGVzay5jb20vYXVkL2p3dGV4cDYwIiwianRpIjoibVdIandXdjNzTFNLeUczTk1ZbnEwb3JYMlczWVZIeXhUZVFpenpCNkNkaE9LZ0U2dTVqcWhndVpUZjdjSUQwSiJ9._TfaRl_XLd2uCifdCPShkY3x7MbLWAF0LaSagKdFLDk",
+						"type": "string"
+					},
+					{
+						"key": "tokenType",
+						"value": "Bearer",
+						"type": "string"
+					},
+					{
+						"key": "addTokenTo",
+						"value": "header",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Search Indexing",
+			"item": [
+				{
+					"name": "/indexing/v1",
+					"request": {
+						"auth": {
+							"type": "oauth1",
+							"oauth1": [
+								{
+									"key": "signatureMethod",
+									"value": "HMAC-SHA1",
+									"type": "string"
+								},
+								{
+									"key": "version",
+									"value": "1.0",
+									"type": "string"
+								},
+								{
+									"key": "addParamsToHeader",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "addEmptyParamsToSign",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"documents\": [\n        {\n            \"item\": {\n                \"sourceId\": {\n                    \"sourceSystem\": \"exampleDataRoot\",\n                    \"id\": \"id200\",\n                    \"type\": \"fs.file\"\n                },\n                \"securityInfo\": {\n                    \"securityType\": \"open\"\n                },\n                \"sourceVersion\": \"1\",\n                \"creator\": {\n                    \"userIdValue\": \"uid2\",\n                    \"userIdType\": \"adsk.oxygen\"\n                },\n                \"lastModifier\": {\n                    \"userIdValue\": \"uid3\",\n                    \"userIdType\": \"adsk.oxygen\"\n                },\n                \"dateCreated\": \"2012-01-01T12:31:12\",\n                \"dateModified\": \"2012-02-02T13:15:15\",\n                \"content\": {\n                    \"textContent\": \"the quick brown fox jumps over the lazy dogs\",\n                    \"name\": \"first example13 name\"\n                }\n            }\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/indexing/v1",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"indexing",
+								"v1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/indexing/v1/status/:doc",
+					"request": {
+						"auth": {
+							"type": "oauth1",
+							"oauth1": [
+								{
+									"key": "signatureMethod",
+									"value": "HMAC-SHA1",
+									"type": "string"
+								},
+								{
+									"key": "version",
+									"value": "1.0",
+									"type": "string"
+								},
+								{
+									"key": "addParamsToHeader",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "addEmptyParamsToSign",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/indexing/v1/status/:doc",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"indexing",
+								"v1",
+								"status",
+								":doc"
+							],
+							"variable": [
+								{
+									"key": "doc",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{ACCESS_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Schema",
+			"item": [
+				{
+					"name": "/schema/v1/namespaces",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{APS_HOST}}/schema/v1/namespaces",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"schema",
+								"v1",
+								"namespaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/schema/v1/namespaces",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"relationships\": {\n\t\t\t\"companies\": {\n\t\t\t\t\"data\": [\n\t\t\t\t\t{\n\t\t\t\t\t\t\"type\": \"companies\",\n\t\t\t\t\t\t\"id\": \"autodesk\"\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t}\n\t\t},\n\t\t\"type\": \"namespaces\",\n\t\t\"attributes\": {\n\t\t\t\"name\": \"petrbrozns\"\n\t\t}\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/schema/v1/namespaces",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"schema",
+								"v1",
+								"namespaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/schema/v1/namespaces/:namespace",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"type\": \"namespaces\",\n\t\t\"attributes\": {\n\t\t\t\"id\": \"{{namespace}}\",\n            \"permissions\": [{\n                \"role\": \"NAMESPACE_ADMIN\",\n                \"subjects\": {\n                    \"o2Users\": [\"oxygen_id_1\",\"oxygen_id_2\"]\n                }\n            }]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/schema/v1/namespaces/:namespace",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"schema",
+								"v1",
+								"namespaces",
+								":namespace"
+							],
+							"variable": [
+								{
+									"key": "namespace",
+									"value": "petrbroz"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{ACCESS_TOKEN}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Web Hooks",
+			"item": [
+				{
+					"name": "Tokens",
+					"item": [
+						{
+							"name": "Add a new Webhook secret token",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/webhooks/v1/tokens",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"webhooks",
+										"v1",
+										"tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update an existing Webhook secret token",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/webhooks/v1/tokens/@me",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"webhooks",
+										"v1",
+										"tokens",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Webhook secret token",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{APS_HOST}}/webhooks/v1/tokens/@me",
+									"host": [
+										"{{APS_HOST}}"
+									],
+									"path": [
+										"webhooks",
+										"v1",
+										"tokens",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create Data Webhook",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2LeggedToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-ads-region",
+								"value": "{{region}}",
+								"description": "EMEA or US",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"callbackUrl\": \"{{webHookCallbackUrl}}\",\r\n    \"scope\": {\r\n         \"folder\": \"{{webHookFolder}}\"\r\n    },\r\n    \"hookAttribute\": {\r\n              \"projectId\": \"{{projectId}}\"\r\n    }\r\n }"
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/webhooks/v1/systems/:system/events/:event/hooks",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"webhooks",
+								"v1",
+								"systems",
+								":system",
+								"events",
+								":event",
+								"hooks"
+							],
+							"variable": [
+								{
+									"key": "system",
+									"value": "{{system.data}}",
+									"description": "data management"
+								},
+								{
+									"key": "event",
+									"value": "{{event.dm.version.added}}"
+								}
+							]
+						},
+						"description": "<a href=\"https://forge.autodesk.com/en/docs/webhooks/v1/reference/http/systems-system-events-event-hooks-POST/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve all data Webhooks",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2LeggedToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-ads-region",
+								"value": "{{region}}",
+								"description": "EMEA or US",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/webhooks/v1/systems/:system/hooks",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"webhooks",
+								"v1",
+								"systems",
+								":system",
+								"hooks"
+							],
+							"variable": [
+								{
+									"key": "system",
+									"value": "{{system.data}}",
+									"description": "\"data\" or \"derivative\""
+								}
+							]
+						},
+						"description": "<a href=\"https://forge.autodesk.com/en/docs/webhooks/v1/reference/http/systems-system-hooks-GET/\">Documentation</a>"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Data Webhook",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{2LeggedToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "x-ads-region",
+								"value": "EMEA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{APS_HOST}}/webhooks/v1/systems/:system/events/:event/hooks/:hook_id",
+							"host": [
+								"{{APS_HOST}}"
+							],
+							"path": [
+								"webhooks",
+								"v1",
+								"systems",
+								":system",
+								"events",
+								":event",
+								"hooks",
+								":hook_id"
+							],
+							"variable": [
+								{
+									"key": "system",
+									"value": "{{system.data}}",
+									"description": "data management"
+								},
+								{
+									"key": "event",
+									"value": "{{event.dm.version.added}}"
+								},
+								{
+									"key": "hook_id",
+									"value": ""
+								}
+							]
+						},
+						"description": "<a href=\"https://forge.autodesk.com/en/docs/webhooks/v1/reference/http/systems-system-events-event-hooks-hook_id-DELETE/\">Documentation</a>"
+					},
+					"response": []
+				}
+			],
+			"description": "Please use Documentation for supported events: [https://aps.autodesk.com/en/docs/webhooks/v1/reference/events/]()"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const token = pm.environment.get('ACCESS_TOKEN');",
+					"const expires = pm.environment.get('TOKEN_EXPIRES_AT');",
+					"",
+					"if (token && expires > (new Date()).getTime()) {",
+					"    console.log('Found valid token.');",
+					"} else {",
+					"    const options = {",
+					"        url: pm.environment.get('APS_HOST') + '/authentication/v1/authenticate',",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Accept': 'application/json',",
+					"            'Content-Type': 'application/x-www-form-urlencoded'",
+					"        },",
+					"        body: {",
+					"            mode: 'urlencoded',",
+					"            urlencoded: [",
+					"                {",
+					"                    key: \"grant_type\",",
+					"                    value: \"client_credentials\",",
+					"                    disabled: false",
+					"                },",
+					"                {",
+					"                    key: \"client_id\",",
+					"                    value: pm.environment.get(\"APS_CLIENT_ID\"),",
+					"                    disabled: false",
+					"                },",
+					"                {",
+					"                    key: \"client_secret\",",
+					"                    value: pm.environment.get(\"APS_CLIENT_SECRET\"),",
+					"                    disabled: false",
+					"                },",
+					"                {",
+					"                    key: \"scope\",",
+					"                    value: pm.environment.get(\"APS_SCOPES\"),",
+					"                    disabled: false",
+					"                }",
+					"            ]",
+					"        }",
+					"    };",
+					"    pm.sendRequest(options, function(err, res) {",
+					"        if (err) {",
+					"            console.error(err);",
+					"        } else {",
+					"            console.log('Updating token and expiration time.');",
+					"            const resp = res.json();",
+					"            console.log('Response', resp);",
+					"            pm.environment.set('ACCESS_TOKEN', resp.access_token);",
+					"            const expiry = new Date();",
+					"            expiry.setSeconds(expiry.getSeconds() + resp.expires_in);",
+					"            pm.environment.set('TOKEN_EXPIRES_AT', expiry.getTime());",
+					"        }",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ACCESS_TOKEN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN_EXPIRES_AT",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
